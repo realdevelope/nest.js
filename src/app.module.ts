@@ -10,14 +10,14 @@ import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
-    CatsModule,
-    MongooseModule.forRoot(process.env.MONGODB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_URI, {
+      useNewUrlParser: true, // <-- no longer necessary
+      useUnifiedTopology: true, // <-- no longer necessary
     }),
+    CatsModule,
   ],
+
   controllers: [AppController],
   providers: [AppService],
 })
@@ -25,7 +25,7 @@ export class AppModule implements NestModule {
   private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false;
 
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('cats');
-    mongoose.set('debug', true);
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+    mongoose.set('debug', this.isDev); //consolog 처럼 로그 확인
   }
 }

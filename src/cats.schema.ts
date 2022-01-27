@@ -21,7 +21,7 @@ export class Cat extends Document {
   })
   @IsString()
   @IsNotEmpty()
-  catname: string;
+  name: string;
 
   @Prop({
     required: true,
@@ -33,6 +33,22 @@ export class Cat extends Document {
   @Prop()
   @IsString()
   imgURl: string;
+
+  readonly readOnlyData: {
+    id: string;
+    email: string;
+    name: string;
+    password: string;
+  };
 }
 
 export const CatSchama = SchemaFactory.createForClass(Cat);
+
+CatSchama.virtual('readOnlyData').get(function (this: Cat) {
+  return {
+    id: this.id,
+    email: this.email,
+    name: this.name,
+    password: this.password,
+  };
+});
